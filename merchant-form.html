@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商户任务提交</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .form-container {
+            padding: 30px 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            height: 50px;
+            padding: 0 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .success {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: #28a745;
+        }
+        
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .error {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .worker-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .worker-info h3 {
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        
+        .worker-info p {
+            color: #424242;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 安装任务提交</h1>
+            <p>请填写详细的安装信息</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="worker-info">
+                <h3>工人信息</h3>
+                <p id="workerDisplay">正在加载工人信息...</p>
+            </div>
+            
+            <div class="error" id="errorMessage"></div>
+            
+            <form id="merchantForm">
+                <input type="hidden" id="workerId" />
+                
+                <div class="form-group">
+                    <label class="form-label" for="customerName">客户姓名 *</label>
+                    <input type="text" id="customerName" class="form-input" placeholder="请输入客户姓名" required />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="customerPhone">联系电话 *</label>
+                    <input type="tel" id="customerPhone" class="form-input" placeholder="请输入联系电话" required />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="location">安装地址 *</label>
+                    <input type="text" id="location" class="form-input" placeholder="请输入详细地址" required />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="fixtureType">灯具类型</label>
+                    <input type="text" id="fixtureType" class="form-input" placeholder="如：吊灯、射灯、筒灯等" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="quantity">安装数量</label>
+                    <input type="number" id="quantity" class="form-input" placeholder="请输入数量" min="1" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="preferredTime">期望安装时间</label>
+                    <input type="datetime-local" id="preferredTime" class="form-input" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="notes">备注说明</label>
+                    <textarea id="notes" class="form-textarea" placeholder="请输入特殊要求或备注信息"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    提交任务
+                </button>
+            </form>
+            
+            <div class="loading" id="loadingDiv">
+                <p>正在提交任务...</p>
+            </div>
+            
+            <div class="success" id="successDiv">
+                <div class="success-icon">✅</div>
+                <h3>任务提交成功！</h3>
+                <p>工人将会收到您的任务信息，请保持电话畅通。</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase配置
+        const SUPABASE_URL = 'https://srifbhukgmdjernrorfe.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyaWZiaHVrZ21kamVybnJvcmZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0MTE4MDMsImV4cCI6MjA2NTk4NzgwM30.S5IaNIQbHIFf2P6x0pqZnmzW_GnjHitJRFhSWyo5yFA';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+        });
+
+        function initializePage() {
+            // 从URL获取参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const workerId = urlParams.get('workerId');
+            const workerName = urlParams.get('workerName') || '未知工人';
+            
+            if (!workerId) {
+                showError('无效的分享链接，缺少工人信息');
+                return;
+            }
+            
+            // 设置工人信息
+            document.getElementById('workerId').value = workerId;
+            document.getElementById('workerDisplay').textContent = `工人ID: ${workerId} | 姓名: ${workerName}`;
+            
+            // 绑定表单提交事件
+            document.getElementById('merchantForm').addEventListener('submit', handleSubmit);
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingDiv = document.getElementById('loadingDiv');
+            const formContainer = document.querySelector('.form-container');
+            const successDiv = document.getElementById('successDiv');
+            
+            // 显示加载状态
+            submitBtn.disabled = true;
+            loadingDiv.style.display = 'block';
+            hideError();
+            
+            try {
+                // 收集表单数据
+                const taskData = {
+                    worker_id: document.getElementById('workerId').value,
+                    customer_name: document.getElementById('customerName').value,
+                    customer_phone: document.getElementById('customerPhone').value,
+                    location: document.getElementById('location').value,
+                    fixture_type: document.getElementById('fixtureType').value || null,
+                    quantity: parseInt(document.getElementById('quantity').value) || null,
+                    preferred_time: document.getElementById('preferredTime').value || null,
+                    notes: document.getElementById('notes').value || null,
+                    status: 'pending',
+                    created_at: new Date().toISOString(),
+                    source: 'merchant_form'
+                };
+                
+                // 提交到Supabase
+                const { data, error } = await supabase
+                    .from('tasks')
+                    .insert([taskData]);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                // 显示成功页面
+                formContainer.style.display = 'none';
+                successDiv.style.display = 'block';
+                
+            } catch (error) {
+                console.error('提交失败:', error);
+                showError('提交失败：' + error.message);
+                submitBtn.disabled = false;
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+        }
+    </script>
+</body>
+</html> 
